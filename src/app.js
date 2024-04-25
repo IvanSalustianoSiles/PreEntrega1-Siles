@@ -3,7 +3,8 @@ import fs from "fs";
 import { products } from "../products-mock.js";
 import express from "express";
 import productRoutes from "./routes/products.routes.js"
-import cartRoutes from "./routes/carts.routes.js"
+import config from "./config.js";
+// import cartRoutes from "./routes/carts.routes.js"
 // Productos de ejemplo para agregar y probar el algoritmo.
 const [product1, product2, product3, productCambiado] = products;
 
@@ -15,15 +16,16 @@ class ProductManager {
     this.path = `./product.json`;
     this.getting = false;
   }
-  addProduct({ title, description, price, thumbnail, code, stock }) {
+  addProduct({ title, description, price, code, stock, category, status }) {
     this.readFileAndSave();
     let newProduct = {
       title: title,
       description: description,
       price: price,
-      thumbnail: thumbnail,
       code: code,
       stock: stock,
+      category: category,
+      status: status
     };
 
     let codeExists = this.productsArray.some(
@@ -127,8 +129,9 @@ export let exampleManager = new ProductManager(); // ProductManager de ejemplo p
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use("api/products/", productRoutes);
-app.use("api/carts/", cartRoutes);
-app.listen(8080, () => {
-  console.log("Servidor activo.");
+app.use('/api/products', productRoutes);
+app.use('/static', express.static(`${config.DIRNAME}/public`));
+// app.use("api/carts/", cartRoutes);
+app.listen(config.PORT, () => {
+  console.log(`Servidor activo en el puerto ${config.PORT}.`);
 });

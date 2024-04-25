@@ -2,7 +2,7 @@ import { exampleManager} from "../app.js";
 import { Router } from "express";
 let toSendObject = {};
 const router = Router();
-router.get("/products", (req, res) => {
+router.get("/", (req, res) => {
   if (req.query.limit) {
     try {
       toSendObject = {
@@ -29,7 +29,7 @@ router.get("/products", (req, res) => {
   }
 });
 
-router.get("/products/:pid", (req, res) => {
+router.get("/:pid", (req, res) => {
   try {
     toSendObject = {
       status: 1,
@@ -42,6 +42,11 @@ router.get("/products/:pid", (req, res) => {
       "Lo sentimos, ha ocurrido un error enviando la información que intentó capturar."
     );
   }
+});
+router.post("/", (req, res) => {
+  let newProduct = {...req.body, status: true};
+  exampleManager.addProduct(newProduct);
+  res.status(200).send(exampleManager.readFileAndSave());
 });
 
 export default router;
